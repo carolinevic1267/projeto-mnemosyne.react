@@ -7,7 +7,7 @@ export const getMemorias = async () => {
   return response.json();  
 }
 
-export const crateMemoria = async (memoria) => {
+export const createMemoria = async (memoria) => {
     const response = await fetch(API_URL, {
         method: 'POST' , 
         headers: {
