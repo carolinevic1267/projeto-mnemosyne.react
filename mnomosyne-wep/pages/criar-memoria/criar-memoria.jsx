@@ -1,0 +1,110 @@
+import { useState } from "react"
+import Footer from "../../src/components/footer/footer"
+import Header from "../../src/components/header/header"
+
+import '../criar-memoria/criar-memoria.css'
+
+
+const Criarmemoria = () => {
+
+    const [titulo, setitulo] = useState('');
+    const [descricao, setdescricao] = useState('');
+    const [imagens, setimagens] = useState({});
+    const [alertaVisivel, setAlertaVisivel] = useState(false)
+
+    const adicionarImagem = (event) => {
+        const arquivos = Array.from(event.target.files)
+        if (arquivos.length > 0) {
+            const novasImagens = arquivos.map((file) => URL.createObjectURL(file));
+            setimagens((prevImagens) => [...prevImagens, ...novasImagens]);
+        }
+    }  
+
+    const submit = async (event) => {
+        event.preventDefautt();
+
+        if (imagens.length === 0) {
+            setAlertaVisivel(true);
+
+            setTimeout(() => {
+                setAlertaVisivel(false);
+            }, 3000);
+            return;
+        }
+
+        setAlertaVisivel(false)
+
+        const novaMemoria = {
+            titulo,
+            descricao,
+            imagens,
+        }
+
+        const memoriaCriada =  await crateMemoria(novaMemoria);
+
+
+        if (memoriaCriada){
+            alert("Memória criada com sucesso");
+            setitulo('');
+            setdescricao('');
+            setimagens([]);
+        }
+    }
+
+
+    
+        
+
+    return ( 
+        <>
+        <Header />
+        <main className="app-main">
+    <h1>Crie uma memória</h1>
+
+    <form className="formulario" onSubmit={submit}>
+        <label className="lbl-txt" for="titulo">Título</label>
+        <input type="text" id="titulo" placeholder="Insira o título aqui"
+        value={titulo}
+        onChange={(e) => setimagens(e.target.value)}
+        />
+
+        <label className="lbl-txt" for="descricao">Descrição</label>
+        <textarea id="descricao" placeholder="Insira a descrição aqui"
+        value={descricao}
+        onChange={(e) => setdescricao(e.target.value)}
+        ></textarea>
+
+        <label className="lbl-txt" for="add-imagens">Imagens</label>
+        <input type="file" id="add-imagens" multiple accept="image/*"
+        onChange={adicionarImagem}
+        />
+        <label for="add-imagens" className="add-images">+ Adicionar imagens</label>
+
+        {imagens.length === 0 ? (
+         <p className="nenhum">Nenhuma imagem adicionada no momento.</p>
+
+        ) : (
+            <div className="img-container">
+                    {imagens.map((imagem) => (
+                        <img src={imagem} />
+                    ))}
+            </div>
+        )
+    }
+        
+
+        <button type="submit" className="btn-criar">Criar memória!</button>
+    </form>
+
+    <div className="cx-alerta visible">
+        <p><strong>Aviso!</strong></p>
+        <p>É necessário adicionar ao menos uma imagem para criar uma memória.</p>
+    </div>
+</main>
+
+        <Footer />
+        </>
+    )
+}
+
+export default Criarmemoria;
